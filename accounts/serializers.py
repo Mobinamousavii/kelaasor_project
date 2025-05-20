@@ -1,5 +1,7 @@
-from rest_framework.serializers import ModelSerializer
-from accounts.models import User
+from rest_framework.serializers import ModelSerializer, Serializer
+from rest_framework import serializers
+from accounts.models import User, OTPCode
+from rest_framework_simplejwt.tokens import RefreshToken
 
 class UserSerializer(ModelSerializer):
     class Meta:
@@ -9,3 +11,38 @@ class UserSerializer(ModelSerializer):
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
+    
+class OTPVerifySerializer(Serializer):
+    phone = serializers.CharField(required=True)
+    otp = serializers.CharField(required=True)
+
+    def validate(self, data):
+        phone = data['phone']
+        otp= data['otp']
+
+        try:
+            otp = OTPCode.objects.filter(phone=phone, code = otp).latest('created_at')
+        except OTPCode.DoesNotExist:
+            raise serializers.ValidationError("کد وارد شده صحیح نیست.")
+        
+        if hasattr(otp, 'is_expired') and otp.is_expired():
+            raise serializers.ValidationError("کد منقضی شده است.")
+
+        otp.is_used = True
+        otp.save()
+
+        user, created = User.objects.get_or_create(phone=phone)
+        data['user'] = user
+        return data
+
+    def create(self, validated_data):
+        user = validated_data['user']
+        refresh = RefreshToken.for_user(user)
+        return {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        }
+
+        
+
+

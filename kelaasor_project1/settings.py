@@ -157,3 +157,9 @@ CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+KAVEHNEGAR_API_KEY = os.getenv('KAVEHNEGAR_API_KEY')

@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 from datetime import timedelta
 import re
+from django.conf import settings
 
 class UserManager(BaseUserManager):
     def normalize_phone(self, phone):
@@ -24,21 +25,19 @@ class UserManager(BaseUserManager):
         return self.create_user(phone, password, **extra_fields)
     
 class User(AbstractBaseUser, PermissionsMixin):
-    ROLE_CHOICES = (
-        ('student', 'دانشجو'),
-        ('teacher', 'مدرس'),
+    SYSTEM_ROLE_CHOICES = (
         ('support', 'پشتیبانی'),
         ('financial', 'مالی'),
         ('content', 'محتوا'),
         ('superuser', 'سوپریوزر'),
     )
+
     phone = models.CharField(max_length=15, unique=True)
-    first_name = models.CharField(max_length=150)
-    last_name = models.CharField(max_length=150)
+    full_name = models.CharField(max_length=150, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     data_joined = models.DateTimeField(auto_now_add=True)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='student')
+    role = models.CharField(max_length=20, choices=SYSTEM_ROLE_CHOICES, null=True, blank=True)
 
     objects = UserManager()
 
@@ -47,9 +46,27 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.phone
+    
+class OTPCode(models.Model):
+    phone = models.CharField(max_length=15)
+    code = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    is_used = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if not self.expires_at:
+            self.expires_at = timezone.now() + timedelta(minutes=2)
+        super().save(*args, **kwargs)
+
+    def is_expired(self):
+        return timezone.now() > self.expires_at
+
+    def __str__(self):
+        return f"{self.phone_number} - {self.code}"
         
 class UserProfile(models.Model):
-    user = models.OneToOneField('AUTH_USER_MODEL', on_delete=models.CASCADE, related_name='profile')
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
     national_code = models.CharField(max_length=10, blank=True)
