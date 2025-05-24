@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework import serializers
-from accounts.models import User, OTPCode
+from accounts.models import User, OTPCode, UserProfile
 from rest_framework_simplejwt.tokens import RefreshToken
 
 class UserSerializer(ModelSerializer):
@@ -42,6 +42,20 @@ class OTPVerifySerializer(Serializer):
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         }
+    
+class UserProfileSerializer(ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['first_name', 'last_name', 'national_code', 'gender', 'birth_date'] 
+        extra_kwargs = {
+            'first_name': {'required': False},
+            'last_name': {'required': False},
+            'national_code': {'required': False},
+            'gender': {'required': False},
+            'birth_date': {'required': False},
+        }
+
+
 
         
 

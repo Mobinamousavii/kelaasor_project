@@ -19,7 +19,7 @@ class UserManager(BaseUserManager):
         return user
     
     def create_superuser(self, phone, password = None, **extra_fields):
-        extra_fields.setdefault('is-staff',True)
+        extra_fields.setdefault('is_staff',True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('role', 'superuser')
         return self.create_user(phone, password, **extra_fields)
@@ -36,7 +36,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     full_name = models.CharField(max_length=150, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    data_joined = models.DateTimeField(auto_now_add=True)
+    date_joined = models.DateTimeField(auto_now_add=True)
     role = models.CharField(max_length=20, choices=SYSTEM_ROLE_CHOICES, null=True, blank=True)
 
     objects = UserManager()

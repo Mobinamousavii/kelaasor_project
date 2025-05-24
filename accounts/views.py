@@ -1,9 +1,9 @@
 from accounts.models import User , OTPCode
-from rest_framework.generics import CreateAPIView 
+from rest_framework.generics import CreateAPIView , RetrieveAPIView , RetrieveUpdateAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from accounts.serializers import UserSerializer, OTPVerifySerializer
-from rest_framework.permissions import AllowAny
+from accounts.serializers import UserSerializer, OTPVerifySerializer, UserProfileSerializer
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from accounts.models import OTPCode
 from django.utils import timezone
 from datetime import timedelta
@@ -46,3 +46,13 @@ class VerifyOTPView(APIView):
             tokens = serializer.save()
             return Response(tokens, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class ProfileView(RetrieveUpdateAPIView):
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user.profile
+    
+
