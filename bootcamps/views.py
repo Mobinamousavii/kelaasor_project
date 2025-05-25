@@ -9,7 +9,7 @@ class BootcampListVew(ListAPIView):
     serializer_class = BootcampSerializer
     permission_classes = [AllowAny]
 
-class BootcampRegiterView(CreateAPIView):
+class BootcampRegisterView(CreateAPIView):
     queryset = BootcampRegistrationRequest.objects.all()
     serializer_class = BootcampRegistrationRequestSerialzer
     permission_classes = [AllowAny]
