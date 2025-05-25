@@ -23,7 +23,7 @@ class Bootcamp(models.Model):
         return self.title
 
 
-class BootCampRegistrationRequest(models.Model):
+class BootcampRegistrationRequest(models.Model):
     STATUS_CHOICES = (
         ('pending', 'بررسی نشده'),
         ('reviewing', 'در حال بررسی'),
