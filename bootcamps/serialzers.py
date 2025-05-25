@@ -12,7 +12,7 @@ class BootcampRegistrationRequestSerialzer(ModelSerializer):
         model = BootcampRegistrationRequest
         fields = ['id', 'bootcamp', 'full_name', 'phone', 'national_code', 'email', 'role']
 
-class BootcampUser(ModelSerializer):
+class BootcampUserSerialzer(ModelSerializer):
     class Meta:
         model = BootcampUser
         fields = '__all__'
