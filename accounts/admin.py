@@ -2,31 +2,46 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import User, UserProfile
 
+from django.utils.translation import gettext_lazy as _
+
 class UserProfileInline(admin.StackedInline):
     model = UserProfile
     can_delete = False
     verbose_name_plural = 'پروفایل'
     fk_name = 'user'
 
+
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    inlines = [UserProfileInline]
-    model = User
-    list_display = ['phone', 'role', 'is_staff', 'is_active']
-    list_filter = ['role', 'is_staff', 'is_active']
-    search_fields = ['phone']
-    ordering = ['-date_joined']
-    
-    #ask how this works 
-    # fieldsets = (
- 
-    # )
-
-    # add_fieldsets = (
-
-    # )
-
-    def get_inline_instances(self, request, obj = None):
-        if not obj:
-            return[]
-        return super().get_inline_instances(request, obj)
+    list_display = (
+        "id",
+        "phone",
+    )
+    search_fields = ("phone", "first_name", "last_name", "email")
+    ordering = ("phone",)
+    fieldsets = (
+        (None, {"fields": ("phone", "password")}),
+        (_("Personal info"), {"fields": ("first_name", "last_name", "email")}),
+        (
+            _("Permissions"),
+            {
+                "fields": (
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "groups",
+                    "user_permissions",
+                ),
+            },
+        ),
+        (_("Important dates"), {"fields": ("last_login", "date_joined")}),
+    )
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": ("phone", "usable_password", "password1", "password2"),
+            },
+        ),
+    )
