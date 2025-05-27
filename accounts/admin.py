@@ -21,7 +21,6 @@ class UserAdmin(BaseUserAdmin):
     ordering = ("phone",)
     fieldsets = (
         (None, {"fields": ("phone", "password")}),
-        (_("Personal info"), {"fields": ("first_name", "last_name", "email")}),
         (
             _("Permissions"),
             {
@@ -36,6 +35,7 @@ class UserAdmin(BaseUserAdmin):
         ),
         (_("Important dates"), {"fields": ("last_login", "date_joined")}),
     )
+    readonly_fields = ("date_joined",)
     add_fieldsets = (
         (
             None,
