@@ -1,5 +1,7 @@
 from kavenegar import KavenegarAPI, APIException, HTTPException
 import os
+from django.core.cache import cache
+import random
 
 def send_otp_sms(phone_number, otp_code):
     try:
@@ -20,3 +22,9 @@ def send_otp_sms(phone_number, otp_code):
         print('API Exception:', e)
     except HTTPException as e:
         print('HTTP Exception:', e)
+
+def generate_otp():
+    return str(random.randint(100000, 999999))
+
+def save_otp_in_cache(phone, code, ttl=120):  
+    cache.set(f"otp_{phone}", code, timeout=ttl)

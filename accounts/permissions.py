@@ -16,5 +16,9 @@ class IsContentUser(BasePermission):
 class IsSuperUser(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.role == 'superuser'
+
+class IsSupportOrSuperuser(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.role in ['support', 'superuser']
            
 
