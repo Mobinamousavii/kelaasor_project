@@ -40,7 +40,7 @@ class UserAdmin(BaseUserAdmin):
             None,
             {
                 "classes": ("wide",),
-                "fields": ("phone",),
+                "fields": ('phone', 'password1', 'password2', 'role', 'is_staff', 'is_active'),
             },
         ),
     )

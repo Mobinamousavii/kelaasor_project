@@ -10,6 +10,10 @@ from accounts.tasks import send_otp_task
 import random
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
+from accounts.utils import generate_otp, store_otp , send_otp_sms, verify_otp
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class SignupView(CreateAPIView):
@@ -17,35 +21,49 @@ class SignupView(CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
-# class RequestOTPView(APIView):
-#     permission_classes = [AllowAny]
-#     def post(self, request):
-#         phone = request.data.get('phone')
-#         if not phone:
-#             return Response({'error': 'Phone number is required.'}, status=status.HTTP_400_BAD_REQUEST)
+class RequestOTPView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        phone = request.data.get('phone')
 
-#         otp_code = str(random.randint(100000, 999999))
+        if not phone:
+            return Response({"detail": "Phone number is required."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        otp_code = generate_otp()
+        store_otp(phone, otp_code)
 
-#         OTPCode.objects.create(
-#             phone=phone,
-#             code=otp_code,
-#             expires_at=timezone.now() + timedelta(minutes=2)
-#         )
-#         print("OTP code is:", otp_code)
-#         send_otp_task.delay(phone, otp_code)
+        success = send_otp_sms(phone, otp_code)
+        if not success:
+            logger.error(f"SendOtpAPIView: Failed to send OTP SMS for {phone}.")
+            return Response({"detail": "Failed to send OTP SMS. Please try again."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        logger.info(f"RequestOTPView: OTP requested and sent successfully for phone: {phone}.")
+        return Response({"detail": "OTP sent successfully."}, status=status.HTTP_200_OK)
 
-#         return Response({'message': 'کد تایید ارسال شد.'}, )
     
 
-# class VerifyOTPView(APIView):
-#     permission_classes = [AllowAny]
-#     def post(self, request):
-#         serializer = OTPVerifySerializer(data=request.data)
-#         if serializer.is_valid():
-#             tokens = serializer.save()
-#             return Response(tokens, status=status.HTTP_200_OK)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+class VerifyOTPView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        phone = request.data.get('phone')
+        code = request.data.get('code')
+
+        if not phone and not code:
+            return Response({"detail": "Phone number and OTP code are required."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        success, message = verify_otp(phone , code)
+        if not success:
+            return Response({"detail": message}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user, _ = User.objects.get_or_create(phone=phone)
+
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            "refresh": str(refresh),
+            "access": str(refresh.access_token)
+        }, status=status.HTTP_200_OK)
+
+
 
 class ProfileView(RetrieveUpdateAPIView):
     serializer_class = UserProfileSerializer

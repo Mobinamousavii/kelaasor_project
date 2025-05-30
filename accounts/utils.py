@@ -57,11 +57,15 @@ def delete_otp(phone):
 
 def verify_otp(phone, input_code):
     stored_otp = get_otp(phone)
+    
+    if stored_otp is None:
+        logger.warning(f"No OTP found in cache for {phone}.")
+        return False, "OTP has expired or was not found."
 
-    if stored_otp and stored_otp == input_code:
-        delete_otp(phone)
-        logger.info(f"OTP verification successful for {phone}.")
-        return True
-    else:
+    if stored_otp != input_code:
         logger.warning(f"OTP verification failed for {phone}. Stored: {stored_otp}, Entered: {input_code}")
-        return False
+        return False, "The entered OTP is incorrect."
+
+    delete_otp(phone)
+    logger.info(f"OTP verification successful for {phone}.")
+    return True, "OTP verified successfully."   
