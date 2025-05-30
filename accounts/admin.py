@@ -17,7 +17,7 @@ class UserAdmin(BaseUserAdmin):
         "id",
         "phone",
     )
-    search_fields = ("phone", "first_name", "last_name", "email")
+    search_fields = ("phone",)
     ordering = ("phone",)
     fieldsets = (
         (None, {"fields": ("phone", "password")}),
@@ -27,7 +27,6 @@ class UserAdmin(BaseUserAdmin):
                 "fields": (
                     "is_active",
                     "is_staff",
-                    "is_superuser",
                     "groups",
                     "user_permissions",
                 ),
@@ -41,7 +40,7 @@ class UserAdmin(BaseUserAdmin):
             None,
             {
                 "classes": ("wide",),
-                "fields": ("phone", "usable_password", "password1", "password2"),
+                "fields": ("phone",),
             },
         ),
     )

@@ -162,11 +162,25 @@ import os
 
 load_dotenv()
 
-KAVEHNEGAR_API_KEY = os.getenv('KAVEHNEGAR_API_KEY')
+KAVENEGAR_API_KEY = os.environ.get('KAVENEGAR_API_KEY', 'YOUR_KAVENEGAR_API_KEY')
+
+
+
+OTP_TIMEOUT = 120
 
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",  
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1", 
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "otp_cache": { 
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/2", 
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
     }
 }
