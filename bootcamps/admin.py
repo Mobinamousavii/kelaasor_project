@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Bootcamp, BootcampRegistrationRequest, BootcampUser
+from .models import Bootcamp, BootcampRegistration, BootcampUser
 
 @admin.register(Bootcamp)
 class BootcampAdmin(admin.ModelAdmin):
@@ -8,7 +8,7 @@ class BootcampAdmin(admin.ModelAdmin):
     search_fields = ['title']
     ordering = ['-start_date']
 
-@admin.register(BootcampRegistrationRequest)
+@admin.register(BootcampRegistration)
 class BootcampRequestAdmin(admin.ModelAdmin):
     list_display = ['full_name', 'phone', 'bootcamp', 'role', 'status', 'created_at']
     list_filter = ['status', 'role']

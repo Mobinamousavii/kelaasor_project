@@ -23,24 +23,7 @@ class Bootcamp(models.Model):
         return self.title
 
 
-class BootcampRegistrationRequest(models.Model):
-    STATUS_CHOICES = (
-        ('pending', 'بررسی نشده'),
-        ('reviewing', 'در حال بررسی'),
-        ('approved', 'تایید شده'),
-        ('rejected', 'تایید نشده'),
-    )
-    bootcamp = models.ForeignKey(Bootcamp, on_delete=models.CASCADE, related_name='requests')
-    full_name = models.CharField(max_length=150)
-    phone = models.CharField(max_length=20)
-    national_code = models.CharField(max_length=10, blank=True)
-    email = models.EmailField(blank=True)
-    role = models.CharField(max_length=10, choices=[('student', 'دانشجو'), ('mentor', 'منتور'), ('teacher', 'استاد')])
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
-    created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f'{self.full_name} - {self.bootcamp.title}'
 
 
 class BootcampUser(models.Model):
@@ -54,3 +37,29 @@ class BootcampUser(models.Model):
 
     def __str__(self):
         return f'{self.user.phone} - {self.role} - {self.bootcamp.title}'
+    
+    
+class BootcampRegistration(models.Model):
+    STATUS_CHOICES = (
+        ('pending', 'بررسی نشده'),
+        ('reviewing', 'در حال بررسی'),
+        ('approved', 'تایید شده'),
+        ('rejected', 'تایید نشده'),
+    )
+
+    ROLE_CHOICES = (
+        ('student', 'دانشجو'), 
+        ('mentor', 'منتور'), 
+        ('teacher', 'استاد')
+    )
+
+    bootcamp = models.ForeignKey(Bootcamp, on_delete=models.CASCADE, related_name='registration_requests')
+    full_name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=15)
+    email = models.EmailField()
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.full_name} - {self.bootcamp.title}'

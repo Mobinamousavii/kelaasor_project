@@ -1,8 +1,8 @@
-from bootcamps.models import Bootcamp, BootcampRegistrationRequest, BootcampUser
+from bootcamps.models import Bootcamp, BootcampRegistration, BootcampUser
 from bootcamps.serialzers import BootcampSerializer
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.views import APIView
-from bootcamps.serialzers import BootcampSerializer, BootcampRegistrationRequestSerialzer, BootcampUserSerialzer
+from bootcamps.serialzers import BootcampSerializer, BootcampRegistrationSerialzer, BootcampUserSerialzer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from accounts.models import User
 from rest_framework.response import Response
@@ -15,8 +15,8 @@ class BootcampListVew(ListAPIView):
     permission_classes = [AllowAny]
 
 class BootcampRegisterView(CreateAPIView):
-    queryset = BootcampRegistrationRequest.objects.all()
-    serializer_class = BootcampRegistrationRequestSerialzer
+    queryset = BootcampRegistration.objects.all()
+    serializer_class = BootcampRegistrationSerialzer
     permission_classes = [AllowAny]
 
 class ApproveRegistrationView(APIView):
@@ -24,7 +24,7 @@ class ApproveRegistrationView(APIView):
 
     def post(self, request, pk):
         try:
-            reg_request = BootcampRegistrationRequest.objects.get(pk=pk)
+            reg_request = BootcampRegistration.objects.get(pk=pk)
             if reg_request.status == 'approved':
                 return Response({'detail': 'قبلاً تایید شده'}, status=status.HTTP_400_BAD_REQUEST)
             
@@ -40,7 +40,7 @@ class ApproveRegistrationView(APIView):
             )
 
             return Response({'detail': 'ثبت‌ نام تایید شد و پیامک ارسال شد.'}, status=status.HTTP_200_OK)
-        except BootcampRegistrationRequest.DoesNotExist:
+        except BootcampRegistration.DoesNotExist:
             return Response({'detail': 'درخواست یافت نشد'}, status=status.HTTP_404_NOT_FOUND)
 
 
