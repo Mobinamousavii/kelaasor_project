@@ -4,7 +4,6 @@ from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.views import APIView
 from bootcamps.serialzers import BootcampSerializer, BootcampRegistrationRequestSerialzer, BootcampUserSerialzer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from accounts.permissions import IsSupportOrSuperuser
 from accounts.models import User
 from rest_framework.response import Response
 from rest_framework import status
@@ -21,7 +20,7 @@ class BootcampRegisterView(CreateAPIView):
     permission_classes = [AllowAny]
 
 class ApproveRegistrationView(APIView):
-    permission_classes = [IsSupportOrSuperuser]
+    permission_classes = [ IsAuthenticated]
 
     def post(self, request, pk):
         try:

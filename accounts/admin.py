@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, UserProfile
+from .models import User, UserProfile, Role
 
 from django.utils.translation import gettext_lazy as _
 
@@ -10,6 +10,11 @@ class UserProfileInline(admin.StackedInline):
     verbose_name_plural = 'پروفایل'
     fk_name = 'user'
 
+
+@admin.register(Role)
+class Role(admin.ModelAdmin):
+    list_display = ['id', 'name']
+    search_fields = ['name']
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
