@@ -27,7 +27,8 @@ def send_approval_sms(phone, name, bootcamp_title):
     except (APIException, HTTPException) as e:
         logger.error(f"SMS send error: {e}")
         return False
-    
+
+@shared_task 
 def send_approval_email(email):
     try:
         if not email:

@@ -11,7 +11,7 @@ class BootcampSerializer(ModelSerializer):
         fields = '__all__'
         read_only_fields = ['status', 'created_at']
 
-class BootcampRegistrationSerialzer(ModelSerializer):
+class BootcampRegistrationSerializer(ModelSerializer):
     class Meta:
         model = BootcampRegistration
         fields = ['id', 'bootcamp', 'full_name', 'phone', 'email', 'role', 'status', 'created_at']
@@ -32,7 +32,7 @@ class BootcampRegistrationSerialzer(ModelSerializer):
         
         return data
 
-class BootcampUserSerialzer(ModelSerializer):
+class BootcampUserSerializer(ModelSerializer):
     class Meta:
         model = BootcampUser
         fields = '__all__'

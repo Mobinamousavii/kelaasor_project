@@ -53,6 +53,7 @@ class BootcampRegistration(models.Model):
         ('teacher', 'استاد')
     )
 
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     bootcamp = models.ForeignKey(Bootcamp, on_delete=models.CASCADE, related_name='registration_requests')
     full_name = models.CharField(max_length=100)
     phone = models.CharField(max_length=15)
