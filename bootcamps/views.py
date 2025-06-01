@@ -2,7 +2,7 @@ from bootcamps.models import Bootcamp, BootcampRegistration, BootcampUser
 from bootcamps.serialzers import BootcampSerializer
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.views import APIView
-from bootcamps.serialzers import BootcampSerializer, BootcampRegistrationSerializer, BootcampUserSerializer
+from bootcamps.serialzers import BootcampSerializer, BootcampRegistrationSerializer, BootcampUserSerializer, BootcamplistSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from accounts.models import User
 from rest_framework.response import Response
@@ -52,4 +52,12 @@ class ApproveRegistrationView(APIView):
         
         except BootcampRegistration.DoesNotExist:
             return Response ({'detail': 'Registration request not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+class Mybootcamps(ListAPIView):
+    serializer_class = BootcamplistSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Bootcamp.objects.filter(members__user = self.request.user).distinct()
+
 

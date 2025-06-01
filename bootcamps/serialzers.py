@@ -36,3 +36,8 @@ class BootcampUserSerializer(ModelSerializer):
     class Meta:
         model = BootcampUser
         fields = '__all__'
+
+class BootcamplistSerializer(ModelSerializer):
+    class Meta:
+        model = Bootcamp
+        fields = [ 'title', 'start_date', 'end_date', 'status']
