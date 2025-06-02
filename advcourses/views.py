@@ -65,3 +65,10 @@ class ApproveAdvRegistrationView(APIView):
 
         except AdvCourseRegistration.DoesNotExist:
             return Response({'detail': 'Registration request not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+class Myadvcourses(ListAPIView):
+    serializer_class = AdvCourselistSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return AdvCourse.objects.filter(members__user = self.request.user).distinct()
