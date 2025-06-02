@@ -6,6 +6,4 @@ urlpatterns = [
     path('register/', BootcampRegisterView.as_view()),
     path('approve/<int:pk>/',ApproveRegistrationView.as_view()),
     path('my-bootcamps/', Mybootcamps.as_view()),
-    
-
 ]
