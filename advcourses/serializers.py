@@ -13,7 +13,7 @@ class AdvCourseSerializer(ModelSerializer):
         read_only_fields = ['status', 'created_at']
 
 
-class AdvancedCourseRegistrationSerializer(BaseRegistrationSerializer):
+class AdvCourseRegistrationSerializer(BaseRegistrationSerializer):
     class Meta:
         model = AdvCourseRegistration
         fields = ['id', 'advcourse', 'full_name', 'phone', 'email', 'role', 'status', 'created_at']

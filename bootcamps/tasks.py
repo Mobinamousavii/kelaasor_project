@@ -7,7 +7,7 @@ from django.core.mail import send_mail
 logger = logging.getLogger(__name__)
 
 @shared_task
-def send_approval_sms(phone, name, bootcamp_title):
+def send_approval_sms(phone, name, course_title):
     try:
         api_key = os.getenv('KAVEHNEGAR_API_KEY')
         if not api_key:
@@ -15,7 +15,7 @@ def send_approval_sms(phone, name, bootcamp_title):
             return False
 
         api = KavenegarAPI(api_key)
-        message = f"{name} عزیز، ثبت‌نام شما در بوتکمپ {bootcamp_title} تایید شد."
+        message = f"{name} عزیز، ثبت‌نام شما در بوتکمپ {course_title} تایید شد."
         params = {
             'receptor': phone,
             'message': message,

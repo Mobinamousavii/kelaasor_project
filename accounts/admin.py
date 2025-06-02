@@ -21,6 +21,8 @@ class UserAdmin(BaseUserAdmin):
     list_display = (
         "id",
         "phone",
+        "role",
+        
     )
     search_fields = ("phone",)
     ordering = ("phone",)
