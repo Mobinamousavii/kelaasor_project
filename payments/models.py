@@ -41,4 +41,4 @@ class Payment(models.Model):
     submitted_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Payment #{self.id} for Invoice #{self.billing_record.id}"
+        return f"Payment #{self.id} for Invoice #{self.invoice.id}"

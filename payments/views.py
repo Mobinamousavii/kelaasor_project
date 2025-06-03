@@ -5,6 +5,7 @@ from accounts.permissions import HasRole
 from django.shortcuts import get_object_or_404
 from accounts.models import User
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import ValidationError
 
 class CreateInvoiceView(CreateAPIView):
     queryset = Invoice.objects.all()
@@ -23,9 +24,17 @@ class MyInvoicesView(ListAPIView):
     def get_queryset(self):
         return Invoice.objects.filter(user=self.request.user).order_by('-created_at')
 
+class CreatePaymentView(CreateAPIView):
+    serializer_class = PaymentSerializer
+    permission_classes = [IsAuthenticated]
 
+    def perform_create(self, serializer):
+        invoice = serializer.validated_data['invoice']
 
+        if invoice.user != self.request.user:
+            raise ValidationError("You are not allowed to pay for this invoice.")
 
+        serializer.save()
 
 
 

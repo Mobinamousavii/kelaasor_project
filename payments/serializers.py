@@ -14,8 +14,8 @@ class InvoiceSerializer(ModelSerializer):
 class PaymentSerializer(ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['id', 'invoice', 'amount', 'payment_type', 'tracking_code', 'receipt_image', 'created_at']
-        read_only_fields = ['created_at']
+        fields = ['id', 'invoice', 'amount', 'payment_method', 'tracking_code', 'receipt_image', 'submitted_at']
+        read_only_fields = ['submitted_at']
 
 
 
