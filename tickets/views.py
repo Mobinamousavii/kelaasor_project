@@ -1,4 +1,4 @@
-from rest_framework.generics import CreateAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, UpdateAPIView, ListAPIView
 from rest_framework.views import APIView
 from tickets.serializers import TicketSerializer, TicketMessageSerializer
 from rest_framework.permissions import IsAuthenticated
@@ -70,4 +70,14 @@ class CloseTicketView(UpdateAPIView):
         ticket.save()
 
         return Response({"detail": "Ticket has been successfully closed."}, status=status.HTTP_200_OK)
+
+
+class ListTicketView(ListAPIView):
+    serializer_class = TicketSerializer
+    permission_classes = [HasRole('support')]
+
+    def get_queryset(self):
+        return Ticket.objects.all().order_by('-created_at')
+    
+
 
