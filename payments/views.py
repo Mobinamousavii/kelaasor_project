@@ -4,7 +4,7 @@ from payments.models import Invoice, Payment
 from accounts.permissions import HasRole
 from django.shortcuts import get_object_or_404
 from accounts.models import User
-
+from rest_framework.permissions import IsAuthenticated
 
 class CreateInvoiceView(CreateAPIView):
     queryset = Invoice.objects.all()
@@ -15,6 +15,13 @@ class CreateInvoiceView(CreateAPIView):
         user_id = self.request.data.get("user")
         user = get_object_or_404(User, id=user_id)
         serializer.save(user=user)
+
+class MyInvoicesView(ListAPIView):
+    serializer_class = InvoiceSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Invoice.objects.filter(user=self.request.user).order_by('-created_at')
 
 
 
