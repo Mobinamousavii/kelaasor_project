@@ -1,9 +1,9 @@
 from rest_framework.serializers import ModelSerializer
-from tickets.models import Ticket, Message
+from tickets.models import Ticket,TicketMessage
 
 class TicketMessageSerializer(ModelSerializer):
     class Meta:
-        model = Message
+        model = TicketMessage
         fields = ['id', 'sender', 'message', 'attachment', 'created_at']
         read_only_fields = ['id', 'created_at', 'sender']
 
