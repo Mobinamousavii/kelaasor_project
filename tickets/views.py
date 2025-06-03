@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from accounts.permissions import HasRole
 from django.shortcuts import get_object_or_404
+from django.core.mail import send_mail
 
 class CreateTicketView(CreateAPIView):
     queryset = Ticket.objects.all()
@@ -31,7 +32,7 @@ class CreateTicketView(CreateAPIView):
             elif user_adv.count() == 1:
                 serializer.save(user=user, related_advcourse=user_adv.first())
             else:
-                raise ValidationError("Please specify which course this ticket is related to.")
+                serializer.save(user=user)
         
         else:
             serializer.save(user=user)
