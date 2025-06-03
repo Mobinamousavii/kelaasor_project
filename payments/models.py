@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 
-class BillingRecord(models.Model):
+class Invoice(models.Model):
     STATUS_CHOICES = (
         ('unpaid', 'پرداخت نشده'),
         ('pending_review', 'در انتظار بررسی'),
@@ -32,7 +32,7 @@ class Payment(models.Model):
         ('online', 'Online'),
     )
 
-    billing_record = models.ForeignKey(BillingRecord, on_delete=models.CASCADE, related_name='payments')
+    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='payments')
     amount = models.PositiveIntegerField()
     payment_method = models.CharField(max_length=10, choices=PAYMENT_METHOD_CHOICES)
     tracking_code = models.CharField(max_length=50, blank=True)
