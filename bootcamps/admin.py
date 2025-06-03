@@ -5,7 +5,7 @@ from bootcamps.tasks import send_approval_email, send_approval_sms
 
 @admin.register(Bootcamp)
 class BootcampAdmin(admin.ModelAdmin):
-    list_display = ['title', 'start_date', 'status', 'capacity']
+    list_display = ['title', 'start_date', 'status', 'capacity', 'price']
     list_filter = ['status', 'start_date']
     search_fields = ['title']
     ordering = ['-start_date']

@@ -12,6 +12,7 @@ class BaseCourse(models.Model):
 
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True)
+    price = models.PositiveIntegerField(default=0)
     start_date = models.DateField()
     end_date = models.DateField()
     days = models.CharField(max_length=100)
