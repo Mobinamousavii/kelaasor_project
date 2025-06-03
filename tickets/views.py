@@ -1,11 +1,15 @@
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, UpdateAPIView
+from rest_framework.views import APIView
 from tickets.serializers import TicketSerializer, TicketMessageSerializer
 from rest_framework.permissions import IsAuthenticated
 from tickets.models import Ticket, TicketMessage
 from bootcamps.models import Bootcamp
 from advcourses.models import AdvCourse
 from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
+from accounts.permissions import HasRole
+from django.shortcuts import get_object_or_404
 
 class CreateTicketView(CreateAPIView):
     queryset = Ticket.objects.all()
@@ -32,4 +36,38 @@ class CreateTicketView(CreateAPIView):
         else:
             serializer.save(user=user)
 
-            
+
+class ReplyToTicketView(CreateAPIView):
+    serializer_class = TicketMessageSerializer
+    permission_classes = [HasRole('support')]
+
+    def perform_create(self, serializer):
+        ticket_id = self.kwargs.get('ticket_id')
+        ticket = get_object_or_404(Ticket, id=ticket_id)
+
+        if ticket.status == 'closed':
+            raise ValidationError("This ticket is already closed and cannot be replied to.")
+
+        serializer.save(ticket=ticket, sender=self.request.user)
+
+        if ticket.status in ['pending', 'reviewing']:
+            ticket.status = 'answered'
+            ticket.save()
+
+
+class CloseTicketView(UpdateAPIView):
+    queryset = Ticket.objects.all()
+    serializer_class = TicketSerializer
+    permission_classes = [HasRole('support')]
+
+    def update(self, request, *args, **kwargs):
+        ticket = self.get_object()
+
+        if ticket.status == 'closed':
+            return Response({"detail": "This ticket is already closed."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        ticket.status = 'closed'
+        ticket.save()
+
+        return Response({"detail": "Ticket has been successfully closed."}, status=status.HTTP_200_OK)
+
