@@ -79,5 +79,12 @@ class ListTicketView(ListAPIView):
     def get_queryset(self):
         return Ticket.objects.all().order_by('-created_at')
     
+class MyTicketsView(ListAPIView):
+    serializer_class = TicketSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Ticket.objects.filter(user=self.request.user).order_by('-created_at')
+    
 
 
