@@ -2,6 +2,18 @@ from django.db import models
 from django.conf import settings
 
 class BaseCourse(models.Model):
+    """
+    Abstract base model for course-like objects.
+
+    Includes fields common to both Bootcamp and AdvCourse:
+    - title: Title of the course
+    - description: Short summary of the course
+    - start_date & end_date: Duration of the course
+    - capacity: Maximum number of participants
+    - status: Workflow stage (draft, open for registration, etc.)
+    - price: Course fee
+    """
+
     STATUS_CHOICES = (
         ('draft', 'پیش‌نویس'),
         ('registration_open', 'در حال ثبت‌نام'),
@@ -27,6 +39,14 @@ class BaseCourse(models.Model):
         abstract = True
 
 class BaseCourseUser(models.Model):
+    """
+    Abstract base model for users enrolled in a course.
+
+    Fields:
+    - user: The user who joined the course
+    - role: Role of the user in the course (student, mentor, teacher)
+    - joined_at: When the user was added
+    """
     ROLE_CHOICES = (
         ('student', 'دانشجو'), 
         ('mentor', 'منتور'), 
@@ -44,6 +64,18 @@ class BaseCourseUser(models.Model):
             return f'{self.user.phone} - {self.role}'
        
 class BaseCourseRegistration(models.Model):
+    """
+    Abstract base model for course registration requests.
+
+    Used when a user applies for a course before joining.
+
+    Fields:
+    - full_name, phone, email: Contact information
+    - role: Requested role in the course
+    - status: Review status of the request
+    - created_at: Submission time
+    """
+
     STATUS_CHOICES = (
         ('pending', 'بررسی نشده'),
         ('reviewing', 'در حال بررسی'),
