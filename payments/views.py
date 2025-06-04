@@ -1,4 +1,4 @@
-from rest_framework.generics import CreateAPIView, ListAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView
 from payments.serializers import InvoiceSerializer, PaymentSerializer
 from payments.models import Invoice, Payment
 from accounts.permissions import HasRole
@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from accounts.models import User
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
 
 class CreateInvoiceView(CreateAPIView):
     queryset = Invoice.objects.all()
@@ -35,6 +36,30 @@ class CreatePaymentView(CreateAPIView):
             raise ValidationError("You are not allowed to pay for this invoice.")
 
         serializer.save()
+
+class ConfirmPaymentView(UpdateAPIView):
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
+    permission_classes = [HasRole('financial')]  
+
+    def update(self, request, *args, **kwargs):
+        payment = self.get_object()
+        invoice = payment.invoice
+
+        if invoice.status == 'paid':
+            return Response({'detail': 'This invoice is already marked as paid.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        total_paid = sum(p.amount for p in invoice.payments.all()) + payment.amount
+
+        if total_paid >= invoice.amount:
+            invoice.status = 'paid'
+        else:
+            invoice.status = 'pending_review'
+
+        invoice.save()
+
+        return Response({'detail': 'Payment confirmed and invoice updated.'}, status=status.HTTP_200_OK)
 
 
 
