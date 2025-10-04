@@ -20,7 +20,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-b^wt(%jv$m(orzl1$uohu$i*hkpj^w2_i-$zeb_a6i0otzqger'
+import os
+from dotenv import load_dotenv
+
+load_dotenv() 
+
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-fallback-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -86,11 +91,11 @@ WSGI_APPLICATION = 'kelaasor_project1.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME':'kelaasor_db',
-        'USER':'mobina',
-        'PASSWORD':'mobina.3203',
-        'Host':'localhost',
-        'POST':'5432',
+        'NAME': os.getenv('DB_NAME', 'default_db'),
+        'USER': os.getenv('DB_USER', 'default_user'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'default_password'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
 
